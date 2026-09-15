@@ -6,9 +6,10 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 
-# =========================================================
-# 1. 페이지 기본 설정
-# =========================================================
+# ============================================================
+# 1. 페이지 설정
+# ============================================================
+
 st.set_page_config(
     page_title="어제의 박스오피스",
     page_icon="🍿",
@@ -16,354 +17,510 @@ st.set_page_config(
 )
 
 
-# =========================================================
-# 2. 영화관 + 티켓 테마 디자인
-# =========================================================
-# Streamlit의 기본 화면에 CSS를 적용해서
-# 영화관처럼 어둡고 따뜻한 분위기로 꾸며 준다.
-st.markdown(
-    """
-    <style>
+# ============================================================
+# 2. CSS 디자인
+# ============================================================
+# CSS는 한 번에 넣어 HTML 코드가 화면에 그대로 보이는 문제를 줄인다.
 
-    /* -----------------------------------------------------
-       전체 배경 : 어두운 영화관 느낌
-    ----------------------------------------------------- */
-    .stApp {
-        background:
-            radial-gradient(
-                circle at top,
-                #5b193c 0%,
-                #2b1024 30%,
-                #160b15 60%,
-                #090609 100%
-            );
-        color: #fff7e8;
-    }
+st.markdown("""
+<style>
 
-    /* 화면의 최대 너비 */
+/* ==========================================================
+   전체 배경
+   ========================================================== */
+
+.stApp {
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            #6a1f47 0%,
+            #35152d 28%,
+            #1c0e1a 55%,
+            #090609 100%
+        );
+}
+
+
+/* 전체 콘텐츠 너비 */
+
+.block-container {
+    max-width: 1150px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+
+/* ==========================================================
+   상단 CINEMA 제목
+   ========================================================== */
+
+.cinema-header {
+    text-align: center;
+    padding: 15px 10px 20px 10px;
+}
+
+.popcorn-logo {
+    font-size: 72px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.main-title {
+    font-size: clamp(38px, 6vw, 65px);
+    font-weight: 900;
+    color: #FFD166;
+    letter-spacing: 2px;
+
+    text-shadow:
+        0 0 8px rgba(255, 209, 102, 0.7),
+        0 0 25px rgba(255, 209, 102, 0.25),
+        4px 4px 0 #9D2941;
+}
+
+.main-subtitle {
+    margin-top: 12px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: #F5D8C3;
+}
+
+
+/* ==========================================================
+   날짜 표시
+   ========================================================== */
+
+.date-ticket {
+    width: fit-content;
+
+    margin:
+        5px auto
+        35px auto;
+
+    padding:
+        11px 28px;
+
+    background: #351528;
+
+    color: #FFD166;
+
+    border:
+        2px solid #FFD166;
+
+    border-radius: 50px;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 18px
+        rgba(255, 209, 102, 0.15);
+}
+
+
+/* ==========================================================
+   섹션 제목
+   ========================================================== */
+
+.section-title {
+
+    margin-top: 35px;
+    margin-bottom: 15px;
+
+    font-size: 27px;
+    font-weight: 900;
+
+    color: #FFD166;
+
+    text-shadow:
+        0 0 10px
+        rgba(255, 209, 102, 0.2);
+}
+
+
+/* ==========================================================
+   GOLDEN TICKET
+   ========================================================== */
+
+.golden-ticket {
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            #FFF8DF 0%,
+            #FFE9AF 50%,
+            #FFD98A 100%
+        );
+
+    border:
+        4px dashed #C23B50;
+
+    border-radius: 28px;
+
+    padding:
+        38px 30px;
+
+    margin:
+        15px 0
+        28px 0;
+
+    box-shadow:
+        0 18px 45px
+        rgba(0,0,0,0.45);
+
+    text-align: center;
+
+    overflow: hidden;
+}
+
+
+/* 티켓 왼쪽 구멍 */
+
+.golden-ticket::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 36px;
+    height: 36px;
+
+    background: #1c0e1a;
+
+    border-radius: 50%;
+
+    left: -20px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+
+/* 티켓 오른쪽 구멍 */
+
+.golden-ticket::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 36px;
+    height: 36px;
+
+    background: #1c0e1a;
+
+    border-radius: 50%;
+
+    right: -20px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+
+/* GOLDEN TICKET 작은 글씨 */
+
+.golden-label {
+
+    color: #A92943;
+
+    font-size: 16px;
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 15px;
+}
+
+
+/* ⭐ 영화 제목 - 크게 수정 */
+
+.golden-movie-title {
+
+    color: #35191D;
+
+    font-size:
+        clamp(
+            42px,
+            6vw,
+            72px
+        );
+
+    line-height: 1.15;
+
+    font-weight: 950;
+
+    margin:
+        12px 0
+        18px 0;
+
+    word-break: keep-all;
+}
+
+
+/* 티켓 아래 정보 */
+
+.golden-info {
+
+    color: #815157;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   METRIC 카드
+   ========================================================== */
+
+[data-testid="stMetric"] {
+
+    background:
+        linear-gradient(
+            135deg,
+            #FFF8DF,
+            #FFE3A1
+        );
+
+    border:
+        3px dashed #C23B50;
+
+    border-radius: 22px;
+
+    padding:
+        22px 20px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,0,0,0.30);
+
+    min-height: 135px;
+}
+
+
+/* metric 제목 */
+
+[data-testid="stMetricLabel"] p {
+
+    color: #A12D43 !important;
+
+    font-size: 15px !important;
+
+    font-weight: 800 !important;
+}
+
+
+/* metric 숫자 */
+
+[data-testid="stMetricValue"] {
+
+    color: #35191D !important;
+
+    font-weight: 900 !important;
+}
+
+
+/* ==========================================================
+   팝콘 구분선
+   ========================================================== */
+
+.popcorn-divider {
+
+    text-align: center;
+
+    font-size: 30px;
+
+    letter-spacing: 10px;
+
+    margin:
+        30px 0
+        10px 0;
+}
+
+
+/* ==========================================================
+   그래프
+   ========================================================== */
+
+[data-testid="stVegaLiteChart"] {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            209,
+            102,
+            0.30
+        );
+
+    border-radius: 22px;
+
+    padding: 18px;
+}
+
+
+/* ==========================================================
+   표
+   ========================================================== */
+
+[data-testid="stDataFrame"] {
+
+    border:
+        2px solid
+        rgba(
+            255,
+            209,
+            102,
+            0.35
+        );
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,0.25);
+}
+
+
+/* ==========================================================
+   Footer
+   ========================================================== */
+
+.footer {
+
+    text-align: center;
+
+    color: #C9AAB3;
+
+    font-size: 13px;
+
+    line-height: 2;
+
+    margin-top: 35px;
+}
+
+
+/* ==========================================================
+   Streamlit 기본 글자 색
+   ========================================================== */
+
+.stMarkdown p {
+    color: #F8E8DE;
+}
+
+
+/* ==========================================================
+   모바일 화면
+   ========================================================== */
+
+@media (max-width: 700px) {
+
     .block-container {
-        max-width: 1100px;
-        padding-top: 2rem;
-        padding-bottom: 4rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 
-
-    /* -----------------------------------------------------
-       맨 위 영화관 간판
-    ----------------------------------------------------- */
-    .cinema-sign {
-        text-align: center;
-        margin-top: 5px;
-        margin-bottom: 10px;
+    .golden-ticket {
+        padding:
+            30px 18px;
     }
 
-    .popcorn-big {
-        font-size: 65px;
-        line-height: 1;
-        margin-bottom: 5px;
-    }
-
-    .cinema-title {
-        font-size: 50px;
-        font-weight: 900;
-        color: #FFD166;
-
-        text-shadow:
-            0 0 8px rgba(255,209,102,0.6),
-            0 0 20px rgba(255,209,102,0.25),
-            4px 4px 0 #9D2941;
-
+    .golden-label {
+        font-size: 12px;
         letter-spacing: 2px;
     }
 
-    .cinema-subtitle {
-        color: #F4D6C1;
-        font-size: 17px;
-        margin-top: 8px;
-    }
-
-
-    /* -----------------------------------------------------
-       날짜 표시
-    ----------------------------------------------------- */
-    .date-board {
-        width: fit-content;
-        margin: 25px auto 30px auto;
-
-        padding: 10px 25px;
-
-        background: #311628;
-        border: 2px solid #FFD166;
-        border-radius: 50px;
-
-        color: #FFD166;
-
-        font-size: 16px;
-        font-weight: 700;
-
-        box-shadow:
-            0 0 15px rgba(255,209,102,0.15);
-    }
-
-
-    /* -----------------------------------------------------
-       1위 영화의 큰 티켓
-    ----------------------------------------------------- */
-    .movie-ticket {
-        position: relative;
-
-        background:
-            linear-gradient(
-                135deg,
-                #FFF4D6,
-                #FFE7AE
-            );
-
-        color: #3C2023;
-
-        border-radius: 24px;
-
-        padding: 30px 35px;
-
-        margin-top: 15px;
-        margin-bottom: 25px;
-
-        border: 4px dashed #C94654;
-
-        box-shadow:
-            0 15px 35px rgba(0,0,0,0.40);
-    }
-
-    .ticket-label {
-        text-align: center;
-
-        color: #B32F45;
-
-        font-size: 14px;
-        font-weight: 900;
-
-        letter-spacing: 3px;
-
-        margin-bottom: 10px;
-    }
-
-    .ticket-movie {
-        text-align: center;
-
-        font-size: 37px;
-        font-weight: 900;
-
-        color: #3C2023;
-
-        margin-bottom: 8px;
-    }
-
-    .ticket-info {
-        text-align: center;
-
-        color: #85565B;
-
-        font-size: 14px;
-
-        font-weight: 600;
-    }
-
-
-    /* -----------------------------------------------------
-       섹션 제목
-    ----------------------------------------------------- */
-    .section-title {
-        font-size: 26px;
-        font-weight: 900;
-
-        color: #FFD166;
-
-        margin-top: 38px;
-        margin-bottom: 17px;
-
-        text-shadow:
-            0 0 8px rgba(255,209,102,0.2);
-    }
-
-
-    /* -----------------------------------------------------
-       Streamlit 지표(metric)를 작은 영화 티켓처럼 꾸미기
-    ----------------------------------------------------- */
-    [data-testid="stMetric"] {
-
-        background:
-            linear-gradient(
-                135deg,
-                #FFF4D6,
-                #FFE5A5
-            );
-
-        padding: 22px;
-
-        border-radius: 20px;
-
-        border: 3px dashed #C94654;
-
-        box-shadow:
-            0 8px 20px rgba(0,0,0,0.30);
-    }
-
-
-    [data-testid="stMetricLabel"] {
-        color: #A03547 !important;
-        font-weight: 800;
-    }
-
-    [data-testid="stMetricValue"] {
-        color: #3C2023 !important;
-        font-weight: 900;
-    }
-
-
-    /* -----------------------------------------------------
-       그래프 영역
-    ----------------------------------------------------- */
-    [data-testid="stVegaLiteChart"] {
-
-        background:
-            rgba(255,255,255,0.04);
-
-        border-radius: 20px;
-
-        padding: 15px;
-
-        border:
-            1px solid rgba(255,209,102,0.25);
-    }
-
-
-    /* -----------------------------------------------------
-       데이터 표
-    ----------------------------------------------------- */
-    [data-testid="stDataFrame"] {
-
-        border-radius: 18px;
-
-        overflow: hidden;
-
-        border:
-            2px solid rgba(255,209,102,0.35);
-
-        box-shadow:
-            0 8px 25px rgba(0,0,0,0.25);
-    }
-
-
-    /* -----------------------------------------------------
-       팝콘 장식
-    ----------------------------------------------------- */
-    .popcorn-divider {
-
-        text-align: center;
-
-        font-size: 27px;
-
-        letter-spacing: 10px;
-
-        margin-top: 25px;
-        margin-bottom: 15px;
-    }
-
-
-    /* -----------------------------------------------------
-       하단
-    ----------------------------------------------------- */
-    .cinema-footer {
-
-        text-align: center;
-
-        color: #C9A9B2;
-
-        margin-top: 35px;
-
+    .golden-info {
         font-size: 13px;
     }
 
+}
 
-    /* Streamlit 기본 구분선 색 */
-    hr {
-        border-color:
-            rgba(255,209,102,0.25);
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+</style>
+""", unsafe_allow_html=True)
 
 
-# =========================================================
+# ============================================================
 # 3. 상단 영화관 간판
-# =========================================================
+# ============================================================
+
 st.markdown(
     """
-    <div class="cinema-sign">
-
-        <div class="popcorn-big">
-            🍿
-        </div>
-
-        <div class="cinema-title">
-            YESTERDAY CINEMA
-        </div>
-
-        <div class="cinema-subtitle">
-            🎬 어제 극장가에서는 어떤 영화가 사랑받았을까? 🎬
-        </div>
-
+<div class="cinema-header">
+    <div class="popcorn-logo">🍿</div>
+    <div class="main-title">YESTERDAY CINEMA</div>
+    <div class="main-subtitle">
+        🎬 어제 극장가에서는 어떤 영화가 사랑받았을까? 🎬
     </div>
-    """,
+</div>
+""",
     unsafe_allow_html=True
 )
 
 
-# =========================================================
-# 4. 한국 시간 기준으로 '어제' 계산
-# =========================================================
+# ============================================================
+# 4. 한국 시간 기준 어제 계산
+# ============================================================
 
-# Streamlit Cloud 서버는 한국에 있지 않을 수 있다.
-# 따라서 서버 시간을 그대로 사용하면 날짜가 틀릴 수 있다.
-# Asia/Seoul 시간대를 직접 지정해 준다.
+# Streamlit Cloud의 서버 시간은 한국 시간이 아닐 수 있다.
+# 따라서 반드시 Asia/Seoul 시간대를 지정한다.
+
 kst = ZoneInfo("Asia/Seoul")
 
 today_kst = datetime.now(kst).date()
 
-# 오늘에서 하루를 빼면 어제 날짜가 된다.
 yesterday = today_kst - timedelta(days=1)
 
 
-# KOBIS API에서 사용하는 형식
+# KOBIS API용 날짜
 # 예: 20260914
+
 target_date = yesterday.strftime("%Y%m%d")
 
 
-# 사람이 보기 편한 형식
+# 화면 표시용 날짜
 # 예: 2026년 09월 14일
-display_date = yesterday.strftime("%Y년 %m월 %d일")
+
+display_date = yesterday.strftime(
+    "%Y년 %m월 %d일"
+)
 
 
-# 날짜를 영화관 전광판처럼 표시
+# 날짜 티켓
+
 st.markdown(
     f"""
-    <div class="date-board">
-        🎟️ {display_date} BOX OFFICE
-    </div>
-    """,
+<div class="date-ticket">
+    🎟️ {display_date} BOX OFFICE
+</div>
+""",
     unsafe_allow_html=True
 )
 
 
-# =========================================================
-# 5. Streamlit Secrets에서 KOBIS 인증키 가져오기
-# =========================================================
+# ============================================================
+# 5. KOBIS 인증키 가져오기
+# ============================================================
 
-# 인증키는 절대 코드에 직접 작성하지 않는다.
-# Streamlit Cloud의 Secrets에 저장된 KOBIS_KEY를 가져온다.
+# 인증키는 코드에 적지 않는다.
+# Streamlit Secrets에서 KOBIS_KEY를 불러온다.
 
 try:
 
@@ -371,19 +528,21 @@ try:
 
 except (KeyError, FileNotFoundError):
 
-    st.error("🎟️ KOBIS 인증키를 불러오지 못했어.")
+    st.error(
+        "🎟️ KOBIS 인증키를 불러오지 못했어."
+    )
 
     st.info(
-        "Streamlit Cloud의 **Settings → Secrets**에서 "
+        "Streamlit Cloud의 Settings → Secrets에서 "
         "`KOBIS_KEY`가 정확하게 등록되어 있는지 확인해 줘."
     )
 
     st.stop()
 
 
-# =========================================================
-# 6. KOBIS 일별 박스오피스 API 요청
-# =========================================================
+# ============================================================
+# 6. KOBIS API 주소
+# ============================================================
 
 api_url = (
     "https://www.kobis.or.kr/"
@@ -392,30 +551,41 @@ api_url = (
 )
 
 
-# API에 보낼 값
+# API에 전달할 값
+
 params = {
 
-    # Secrets에서 가져온 인증키
-    "key": kobis_key,
+    "key":
+        kobis_key,
 
-    # 한국 시간 기준 어제
-    "targetDt": target_date
+    "targetDt":
+        target_date
 }
 
 
+# ============================================================
+# 7. API 요청
+# ============================================================
+
 try:
 
-    # KOBIS 서버에 데이터 요청
     response = requests.get(
+
         api_url,
+
         params=params,
+
         timeout=10
     )
 
-    # 404, 500 등의 HTTP 오류가 있는지 확인
+
+    # HTTP 오류 확인
+
     response.raise_for_status()
 
-    # JSON → 파이썬 딕셔너리
+
+    # JSON 데이터 읽기
+
     data = response.json()
 
 
@@ -436,29 +606,25 @@ except requests.exceptions.RequestException:
 except ValueError:
 
     st.error(
-        "🎬 KOBIS 서버에서 받은 데이터를 정상적으로 읽지 못했어."
+        "🎬 KOBIS 서버의 응답을 정상적으로 읽지 못했어."
     )
 
     st.info(
         "KOBIS API 주소가 올바른지, "
-        "서버가 정상적으로 응답하고 있는지 확인해 줘."
+        "KOBIS 서버가 정상적으로 작동하는지 확인해 줘."
     )
 
     st.stop()
 
 
-# =========================================================
-# 7. faultInfo 확인
-# =========================================================
+# ============================================================
+# 8. KOBIS faultInfo 확인
+# ============================================================
 
-# 중요!
+# KOBIS는 인증키가 틀려도
+# HTTP 상태코드가 200으로 올 수 있다.
 #
-# KOBIS는 인증키가 틀렸더라도
-# HTTP 상태코드를 200으로 보내는 경우가 있다.
-#
-# 대신 JSON 안에 faultInfo가 들어온다.
-#
-# 따라서 response.status_code만 검사해서는 안 된다.
+# 이 경우 JSON 안에 faultInfo가 들어온다.
 
 if "faultInfo" in data:
 
@@ -467,10 +633,12 @@ if "faultInfo" in data:
         {}
     )
 
+
     error_code = fault.get(
         "errorCode",
         "알 수 없음"
     )
+
 
     error_message = fault.get(
         "message",
@@ -482,26 +650,30 @@ if "faultInfo" in data:
         "🎟️ KOBIS API에서 오류가 도착했어."
     )
 
-    st.write(
-        f"**오류 코드:** {error_code}"
-    )
 
     st.write(
-        f"**오류 내용:** {error_message}"
+        f"오류 코드: {error_code}"
     )
+
+
+    st.write(
+        f"오류 내용: {error_message}"
+    )
+
 
     st.info(
         "Streamlit Secrets의 `KOBIS_KEY`가 정확한지 확인하고, "
         "영화진흥위원회에서 발급받은 인증키가 "
-        "현재 정상적으로 사용 가능한지도 확인해 줘."
+        "정상적으로 사용 가능한지도 확인해 줘."
     )
+
 
     st.stop()
 
 
-# =========================================================
-# 8. 영화 목록 가져오기
-# =========================================================
+# ============================================================
+# 9. 영화 목록 가져오기
+# ============================================================
 
 try:
 
@@ -519,13 +691,16 @@ except (KeyError, TypeError):
 
     st.info(
         "API 응답 구조가 변경되지 않았는지, "
-        "해당 날짜의 데이터가 정상적으로 제공되고 있는지 확인해 줘."
+        "해당 날짜 데이터가 정상적으로 제공되는지 확인해 줘."
     )
 
     st.stop()
 
 
-# 목록 자체가 비어 있을 수도 있다.
+# ============================================================
+# 10. 빈 영화 목록 확인
+# ============================================================
+
 if not movie_list:
 
     st.warning(
@@ -541,9 +716,9 @@ if not movie_list:
     st.stop()
 
 
-# =========================================================
-# 9. 필요한 데이터 정리
-# =========================================================
+# ============================================================
+# 11. 필요한 데이터만 정리
+# ============================================================
 
 rows = []
 
@@ -552,30 +727,26 @@ for movie in movie_list:
 
     try:
 
-        rows.append(
-            {
-                # KOBIS 숫자 값은 문자열로 오기 때문에
-                # int()로 숫자로 변환한다.
+        rows.append({
 
-                "순위":
-                    int(movie["rank"]),
+            "순위":
+                int(movie["rank"]),
 
-                "영화명":
-                    movie["movieNm"],
+            "영화명":
+                movie["movieNm"],
 
-                "개봉일":
-                    movie["openDt"],
+            "개봉일":
+                movie["openDt"],
 
-                "관객수":
-                    int(movie["audiCnt"]),
+            "관객수":
+                int(movie["audiCnt"]),
 
-                "누적관객":
-                    int(movie["audiAcc"]),
+            "누적관객":
+                int(movie["audiAcc"]),
 
-                "스크린수":
-                    int(movie["scrnCnt"]),
-            }
-        )
+            "스크린수":
+                int(movie["scrnCnt"])
+        })
 
 
     except (
@@ -584,16 +755,21 @@ for movie in movie_list:
         ValueError
     ):
 
-        # 특정 영화의 데이터가 이상하면
-        # 전체 앱을 멈추지 않고 해당 영화만 건너뛴다.
+        # 일부 영화의 데이터가 이상한 경우
+        # 해당 영화만 건너뛴다.
+
         continue
 
 
-# 리스트 → pandas DataFrame
+# DataFrame으로 변환
+
 df = pd.DataFrame(rows)
 
 
-# 변환했는데 아무 데이터도 남지 않은 경우
+# ============================================================
+# 12. 변환된 데이터 확인
+# ============================================================
+
 if df.empty:
 
     st.error(
@@ -608,7 +784,8 @@ if df.empty:
     st.stop()
 
 
-# 순위 순서대로 정렬
+# 순위 순으로 정렬
+
 df = (
     df
     .sort_values("순위")
@@ -616,61 +793,65 @@ df = (
 )
 
 
-# =========================================================
-# 10. 1위 영화 가져오기
-# =========================================================
+# ============================================================
+# 13. 1위 영화
+# ============================================================
 
 top_movie = df.iloc[0]
 
 
-# =========================================================
-# 11. 1위 영화 GOLDEN TICKET
-# =========================================================
+# ============================================================
+# 14. GOLDEN TICKET
+# ============================================================
 
 st.markdown(
-    """
-    <div class="section-title">
-        🏆 오늘의 GOLDEN TICKET
-    </div>
-    """,
+    '<div class="section-title">🏆 오늘의 GOLDEN TICKET</div>',
     unsafe_allow_html=True
 )
 
 
-# 1위 영화 정보를 커다란 영화 티켓처럼 표시
+# 영화 이름에 혹시 HTML 특수문자가 포함되어 있을 경우를 대비해
+# Streamlit 화면에서 이상하게 해석되지 않도록 escape 처리한다.
+
+import html
+
+safe_movie_name = html.escape(
+    str(top_movie["영화명"])
+)
+
+safe_open_date = html.escape(
+    str(top_movie["개봉일"])
+)
+
+
+# GOLDEN TICKET
+
 st.markdown(
     f"""
-    <div class="movie-ticket">
-
-        <div class="ticket-label">
-            ★ BOX OFFICE NO.1 ★
-        </div>
-
-        <div class="ticket-movie">
-            🎟️ {top_movie['영화명']}
-        </div>
-
-        <div class="ticket-info">
-            {display_date}
-            &nbsp;&nbsp;•&nbsp;&nbsp;
-            개봉일 {top_movie['개봉일']}
-        </div>
-
+<div class="golden-ticket">
+    <div class="golden-label">
+        ★ BOX OFFICE NO.1 ★
     </div>
-    """,
+    <div class="golden-movie-title">
+        {safe_movie_name}
+    </div>
+    <div class="golden-info">
+        🎬 BOX OFFICE 1위 &nbsp; • &nbsp;
+        📅 개봉일 {safe_open_date}
+    </div>
+</div>
+""",
     unsafe_allow_html=True
 )
 
 
-# =========================================================
-# 12. 1위 영화 지표 카드 3개
-# =========================================================
+# ============================================================
+# 15. 1위 영화 지표 카드
+# ============================================================
 
-# 세 개의 열을 만든다.
 col1, col2, col3 = st.columns(3)
 
 
-# 첫 번째 티켓
 with col1:
 
     st.metric(
@@ -679,16 +860,14 @@ with col1:
     )
 
 
-# 두 번째 티켓
 with col2:
 
     st.metric(
-        label="🎬 누적 관객수",
+        label="👥 누적 관객수",
         value=f"{top_movie['누적관객']:,}명"
     )
 
 
-# 세 번째 티켓
 with col3:
 
     st.metric(
@@ -697,39 +876,36 @@ with col3:
     )
 
 
-# 팝콘 장식
+# ============================================================
+# 16. 팝콘 구분선
+# ============================================================
+
 st.markdown(
-    """
-    <div class="popcorn-divider">
-        🍿 ✦ 🍿 ✦ 🍿
-    </div>
-    """,
+    '<div class="popcorn-divider">🍿 ✦ 🍿 ✦ 🍿</div>',
     unsafe_allow_html=True
 )
 
 
-# =========================================================
-# 13. 관객수 TOP 5
-# =========================================================
+# ============================================================
+# 17. 관객수 TOP 5
+# ============================================================
 
 st.markdown(
-    """
-    <div class="section-title">
-        📊 🍿 관객수 TOP 5
-    </div>
-    """,
+    '<div class="section-title">📊 관객수 TOP 5</div>',
     unsafe_allow_html=True
 )
 
 
-# 순위가 가장 높은 영화 5편
+# 순위 상위 5개 영화
+
 top5 = df.nsmallest(
     5,
     "순위"
 )
 
 
-# 영화명을 그래프의 이름으로 사용한다.
+# 그래프용 데이터
+
 chart_data = (
     top5
     .set_index("영화명")
@@ -737,27 +913,23 @@ chart_data = (
 )
 
 
-# Streamlit 기본 막대그래프
+# 막대그래프
+
 st.bar_chart(
     chart_data
 )
 
 
-# =========================================================
-# 14. 전체 박스오피스 순위
-# =========================================================
+# ============================================================
+# 18. 전체 박스오피스 표
+# ============================================================
 
 st.markdown(
-    """
-    <div class="section-title">
-        🎬 오늘의 영화관 상영표
-    </div>
-    """,
+    '<div class="section-title">🎬 어제의 박스오피스 순위</div>',
     unsafe_allow_html=True
 )
 
 
-# 데이터 표 표시
 st.dataframe(
 
     df,
@@ -800,40 +972,32 @@ st.dataframe(
             st.column_config.NumberColumn(
                 "🎞️ 스크린수",
                 format="%,d개"
-            ),
+            )
     }
 )
 
 
-# =========================================================
-# 15. 마지막 장식
-# =========================================================
+# ============================================================
+# 19. 마지막 팝콘 장식
+# ============================================================
 
 st.markdown(
-    """
-    <div class="popcorn-divider">
-        🎞️ 🍿 🎬 🍿 🎞️
-    </div>
-    """,
+    '<div class="popcorn-divider">🎞️ 🍿 🎬 🍿 🎞️</div>',
     unsafe_allow_html=True
 )
 
 
-# =========================================================
-# 16. 출처
-# =========================================================
+# ============================================================
+# 20. 하단 출처
+# ============================================================
 
 st.markdown(
     f"""
-    <div class="cinema-footer">
-
-        🎟️ 조회 기준 : {display_date}<br><br>
-
-        🎬 데이터 출처 : 영화진흥위원회 KOBIS<br><br>
-
-        🍿 Have a nice movie day!
-
-    </div>
-    """,
+<div class="footer">
+    🎟️ 조회 기준 : {display_date}<br>
+    🎬 데이터 출처 : 영화진흥위원회 KOBIS<br>
+    🍿 Have a nice movie day!
+</div>
+""",
     unsafe_allow_html=True
 )
